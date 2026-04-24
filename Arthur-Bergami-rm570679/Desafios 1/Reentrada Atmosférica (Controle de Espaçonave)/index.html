@@ -69,6 +69,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: 0.3s ease;
         }
     </style>
 </head>
@@ -90,31 +91,49 @@
 
     <script>
         const btn = document.getElementById('btnCalcular');
-        //Chamar váriavel display seguir padrão de da variavel btn
+        // Chamar variável display seguindo o padrão
+        const display = document.getElementById('resultado-logica');
 
-        //Liga o seu código HTML à ação do usuário
         btn.addEventListener('click', () => {
             const angulo = parseFloat(document.getElementById('anguloInput').value);
-            //Chamar váriavel escudo seguir padrão de da variavel angulo objeto (resultado-logica)
+            // Chamar variável escudo seguindo o padrão de angulo
+            const escudo = parseFloat(document.getElementById('escudoInput').value);
             
             let mensagem = "";
             let cor = "";
+
             // --- LÓGICA DE REENTRADA ---
 
-            //"#3fb950"; // Verde
-            //"#f85149"; //Vermelho
-            //"#d29922"; // Amarelo
-
-            // Validação de entrada: se não for número, dispara erro.
+            // Validação inicial
             if (isNaN(angulo) || isNaN(escudo)) {
                 mensagem = "❌ Insira os dados da telemetria!";
-                cor = "#f85149";
+                cor = "#f85149"; // Vermelho
             } 
-            //Segue Continuidade da Lógica....
+            // 1. Verificação Crítica: Ângulo muito agudo (Risco de queimar)
+            else if (angulo > 30) {
+                mensagem = "🔥 PERIGO: Ângulo muito alto! Incineração iminente.";
+                cor = "#f85149";
+            }
+            // 2. Verificação Crítica: Ângulo muito raso (Risco de ricochetear para o espaço)
+            else if (angulo < 10) {
+                mensagem = "🌌 ERRO: Ângulo muito baixo! A nave irá ricochetear.";
+                cor = "#d29922"; // Amarelo
+            }
+            // 3. Verificação de Segurança: Integridade do escudo
+            else if (escudo < 50) {
+                mensagem = "⚠️ ALERTA: Escudo insuficiente para o calor térmico!";
+                cor = "#d29922";
+            }
+            // 4. Sucesso: Parâmetros ideais
+            else {
+                mensagem = "✅ REENTRADA SEGURA: Bem-vindo de volta à Terra!";
+                cor = "#3fb950"; // Verde
+            }
 
             display.innerText = mensagem;
             display.style.color = cor;
-            //Chamar borderColor seguir padrão display.style.color = cor;
+            // Chamar borderColor seguindo o padrão pedido
+            display.style.borderColor = cor;
         });
     </script>
     
