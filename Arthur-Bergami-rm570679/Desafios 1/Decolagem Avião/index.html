@@ -80,6 +80,7 @@
             text-align: center;
             border: 2px solid transparent;
             min-height: 50px;
+            transition: 0.5s;
         }
     </style>
 </head>
@@ -114,47 +115,75 @@
 
     <script>
         const btn = document.getElementById('btnVerificar');
-        //Chamar váriavel campoTexto seguir padrão de da variavel btn usando objeto (resultado-logica)
+        // Seleção do campo de texto seguindo o padrão
+        const campoTexto = document.getElementById('resultado-logica');
 
         btn.addEventListener('click', () => {
             // Entradas de dados
             const combustivel = parseFloat(document.getElementById('combustivel').value);
-            //criar variável peso seguir padrão de da variavel combustivel
-             //criar variável vento seguir padrão de variavel combustivel
+            // Variável peso seguindo o padrão
+            const peso = parseFloat(document.getElementById('peso').value);
+            // Variável vento seguindo o padrão
+            const vento = parseFloat(document.getElementById('vento').value);
+            
             const flapsAjustados = document.getElementById('flaps').checked;
-            //criar Variável autorizacaoTorre vento seguir padrão de variavel flapsAjustados
+            // Variável autorizacaoTorre seguindo o padrão
+            const autorizacaoTorre = document.getElementById('torre').checked;
 
             let mensagem = "";
             let cor = "";
             let decolagemOk = true;
 
-            //"#3fb950"; // Verde
-            //"#f85149"; //Vermelho
-            //"#d29922"; // Amarelo
-
             // --- LÓGICA DE SEGURANÇA (Regras de Negócio) ---
 
-            //Exemplo lógico da váriavel
+            // Prioridade 1: Autorização da Torre
             if (!autorizacaoTorre) {
                 mensagem = "DECOLAGEM ABORTADA: Aguardando liberação da Torre.";
                 decolagemOk = false;
-                cor = "#f85149"; // Rosa/Vermelho
+                cor = "#f85149"; // Vermelho
             } 
-            //Continue Aqui a lógica de bloqueio do voo......
-
-
-
-           // --- RESULTADO FINAL ---
-            if (decolagemOk) {
-                //Coloque aqui o resultado final
-            } else {
-                //Saida padrão
+            // Prioridade 2: Flaps
+            else if (!flapsAjustados) {
+                mensagem = "DECOLAGEM RECUSADA: Flaps não configurados.";
+                decolagemOk = false;
+                cor = "#d29922"; // Amarelo
             }
-           
+            // Prioridade 3: Combustível (Exemplo: Mínimo 20%)
+            else if (combustivel < 20 || isNaN(combustivel)) {
+                mensagem = "FALHA: Nível de combustível crítico para decolagem.";
+                decolagemOk = false;
+                cor = "#f85149";
+            }
+            // Prioridade 4: Peso (Exemplo: Limite de 50 toneladas)
+            else if (peso > 50 || isNaN(peso)) {
+                mensagem = "ALERTA: Peso acima do limite estrutural da pista.";
+                decolagemOk = false;
+                cor = "#d29922";
+            }
+            // Prioridade 5: Vento (Exemplo: Máximo 40 km/h)
+            else if (vento > 40 || isNaN(vento)) {
+                mensagem = "CLIMA: Ventos de cauda muito fortes para decolar.";
+                decolagemOk = false;
+                cor = "#f85149";
+            }
 
+            // --- RESULTADO FINAL ---
+            if (decolagemOk) {
+                mensagem = "DECOLAGEM AUTORIZADA: Boa viagem, Comandante!";
+                cor = "#3fb950"; // Verde
+            } else {
+                // Caso não entre em nenhuma regra acima, mas decolagemOk ainda seja false
+                if (mensagem === "") {
+                    mensagem = "REVISAR: Dados incompletos ou inconsistentes.";
+                    cor = "#d29922";
+                }
+            }
+
+            // Saída de dados na UI
             campoTexto.innerText = mensagem;
             campoTexto.style.color = cor;
-            //Chamar borderColor seguir padrão display.style.color = cor;
+            // Atualiza o borderColor seguindo o padrão pedido
+            campoTexto.style.borderColor = cor;
         });
     </script>
     
