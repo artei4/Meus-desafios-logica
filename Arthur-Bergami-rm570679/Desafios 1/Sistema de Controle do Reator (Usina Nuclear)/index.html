@@ -98,15 +98,17 @@
     <script>
         // 1. Capturar o botão e o campo de saída (monitor)
         const btn = document.getElementById('btnCheck');
-        // Chamar variável monitor seguindo o padrão da variável btn usando o objeto (resultado-logica) 
+        // Chamar variável monitor seguindo o padrão
+        const monitor = document.getElementById('resultado-logica');
 
         // 2. Evento de Clique
         btn.addEventListener('click', () => {
             
             // 3. Capturar os valores dos inputs
             const temp = parseFloat(document.getElementById('tempInput').value);
-            // Chamar variável pres (pressão) seguindo o padrão
-            // Chamar variável hastes seguindo o padrão
+            // Chamar variável pres e hastes seguindo o padrão
+            const pres = parseFloat(document.getElementById('presInput').value);
+            const hastes = parseFloat(document.getElementById('hastesInput').value);
             
             // Capturar o valor do checkbox (booleano)
             const manual = document.getElementById('manualSwitch').checked;
@@ -114,24 +116,39 @@
             let msg = "";
             let cor = "";
 
-            // Cores para os alunos usarem:
-            // Estável: "#00ff00" (Verde)
-            // Alerta: "#ffff00" (Amarelo)
-            // Crítico: "#ff0000" (Vermelho)
+            // --- INÍCIO DA LÓGICA DE PRIORIDADE ---
 
-            // --- INÍCIO DA LÓGICA DE PRIORIDADE CRÍTICA ---
-
-            // Validação de entrada: se não for número, dispara erro.
+            // Validação de entrada
             if (isNaN(temp) || isNaN(pres) || isNaN(hastes)) {
                 msg = "ERRO: SENSORES ILEGÍVEIS";
                 cor = "#ffff00";
             } 
-            //Continue a lógica aqui....
+            // Prioridade 0: Desligamento (Interrupção Manual ou Pressão Crítica)
+            else if (manual || pres > 100) {
+                msg = "⚠️ SISTEMA DESLIGADO / SHUTDOWN";
+                cor = "#ff0000";
+            }
+            // Prioridade 1: Risco de Fusão (Calor alto e hastes zeradas)
+            else if (temp > 700 && hastes === 0) {
+                msg = "☢️ CRÍTICO: NÚCLEO SEM CONTROLE!";
+                cor = "#ff0000";
+            }
+            // Prioridade 2: Alerta (Temperatura entre 400°C e 700°C)
+            else if (temp >= 400 && temp <= 700) {
+                msg = "⚠️ ATENÇÃO: ESTADO DE ALERTA";
+                cor = "#ffff00";
+            }
+            // Prioridade 3: Estável
+            else if (temp < 400) {
+                msg = "✅ SISTEMA ESTÁVEL / OPERACIONAL";
+                cor = "#00ff00";
+            }
 
             // 4. Exibir os resultados no monitor (DOM)
             monitor.innerText = msg;
             monitor.style.color = cor;
-            // Chamar borderColor seguir o padrão acima
+            // Chamar borderColor seguir o padrão
+            monitor.style.borderColor = cor;
             
         });
     </script>
